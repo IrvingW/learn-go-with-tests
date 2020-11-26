@@ -1,8 +1,12 @@
 package pointers
 
-import "fmt"
+import (
+	"errors"
+	"fmt"
+)
 
 // Bitcoin represent bitcon
+// inherit from int
 type Bitcoin int
 
 func (b Bitcoin) String() string {
@@ -21,6 +25,20 @@ func (w *Wallet) Deposit(amount Bitcoin) {
 }
 
 // Balance return the remain balance in the wallet
-func (w Wallet) Balance() Bitcoin {
+func (w *Wallet) Balance() Bitcoin {
 	return w.balance
+}
+
+// ErrInsufficientFunds represent an error
+var ErrInsufficientFunds = errors.New("Insufficient funds error")
+
+// Withdraw will check if your wallet has sufficient money
+// if so, it will withdraw amount money, and return nil
+// if not, it will return an error
+func (w *Wallet) Withdraw(amount Bitcoin) error {
+	if w.balance < amount {
+		return ErrInsufficientFunds
+	}
+	w.balance -= amount
+	return nil
 }
