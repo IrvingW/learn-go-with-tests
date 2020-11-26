@@ -6,8 +6,8 @@ func TestWallet(t *testing.T) {
 	w := Wallet{0}
 	w.Deposit(100)
 	got := w.Balance()
-	want := 100
+	want := Bitcoin(100)
 	if got != want {
-		t.Errorf("got %d but want %d", got, want)
+		t.Errorf("got %s but want %s", got, want)
 	}
 }
