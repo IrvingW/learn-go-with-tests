@@ -32,3 +32,25 @@ func assertError(t *testing.T, got, want error) {
 		t.Errorf("got error %s but want error %s", got, want)
 	}
 }
+
+func assertValue(t *testing.T, dict Dict, key string, want string) {
+	t.Helper()
+	got, err := dict.Search(key)
+	assertError(t, err, nil)
+	assertString(t, got, want)
+}
+
+func TestAdd(t *testing.T) {
+	t.Run("add new key", func(t *testing.T) {
+		dict := make(Dict)
+		err := dict.Add("test", "answer")
+		assertError(t, err, nil)
+		assertValue(t, dict, "test", "answer")
+	})
+	t.Run("add existing key", func(t *testing.T) {
+		dict := Dict{"test": "test"}
+		err := dict.Add("test", "answer")
+		assertError(t, err, ErrorKeyExist)
+		assertValue(t, dict, "test", "test")
+	})
+}
