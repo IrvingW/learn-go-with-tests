@@ -16,6 +16,9 @@ const (
 
 	// ErrorKeyExist is returned when insert key already exists in map
 	ErrorKeyExist = DictError("the key you are inserting already exist")
+
+	// ErrorKeyNotExist is returned when given key does not exist in map
+	ErrorKeyNotExist = DictError("the key does not exist in map")
 )
 
 // Search accept a string argument, then using this input search in map
@@ -39,6 +42,21 @@ func (d Dict) Add(key, value string) error {
 		d[key] = value
 	case nil:
 		return ErrorKeyExist
+	default:
+		return err
+	}
+	return nil
+}
+
+// Update update the value of given key,
+// return ErrorKeyNotExist if key not exist in map
+func (d Dict) Update(key, value string) error {
+	_, err := d.Search(key)
+	switch err {
+	case ErrorNotFound:
+		return ErrorKeyNotExist
+	case nil:
+		d[key] = value
 	default:
 		return err
 	}

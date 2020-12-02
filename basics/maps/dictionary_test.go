@@ -54,3 +54,18 @@ func TestAdd(t *testing.T) {
 		assertValue(t, dict, "test", "test")
 	})
 }
+
+func TestUpdate(t *testing.T) {
+	t.Run("normal case", func(t *testing.T) {
+		dict := Dict{"test": "test"}
+		err := dict.Update("test", "update")
+		assertError(t, err, nil)
+		assertValue(t, dict, "test", "update")
+	})
+
+	t.Run("key not exist case", func(t *testing.T) {
+		dict := make(Dict)
+		err := dict.Update("test", "update")
+		assertError(t, err, ErrorKeyNotExist)
+	})
+}
