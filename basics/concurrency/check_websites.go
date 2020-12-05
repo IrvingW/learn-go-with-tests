@@ -1,5 +1,7 @@
 package concurrency
 
+import "time"
+
 // WebsiteChecker 接口接收一个字符串，返回他是否正确
 type WebsiteChecker func(string) bool
 
@@ -8,7 +10,10 @@ type WebsiteChecker func(string) bool
 func CheckWebsites(wc WebsiteChecker, urls []string) (results map[string]bool) {
 	results = make(map[string]bool)
 	for _, url := range urls {
-		results[url] = wc(url)
+		go func(u string) {
+			results[u] = wc(u)
+		}(url)
 	}
+	time.Sleep(1 * time.Second)
 	return
 }
