@@ -1,13 +1,26 @@
 package racer
 
-import "testing"
+import (
+	"net/http"
+	"net/http/httptest"
+	"testing"
+	"time"
+)
 
 func TestRacer(t *testing.T) {
-	urlA := "www.baidu.com"
-	urlB := "www.json.cn"
-	winner := Racer(urlA, urlB)
-	want := urlB
-	if winner != want {
-		t.Errorf("got %v but want %v", winner, want)
+	slowServer := httptest.NewServer(http.HandlerFunc(
+		func(w http.ResponseWriter, r *http.Request) {
+			time.Sleep(time.Second * 1)
+			w.WriteHeader(http.StatusOK)
+		}))
+	fastServer := httptest.NewServer(http.HandlerFunc(
+		func(w http.ResponseWriter, r *http.Request) {
+			w.WriteHeader(http.StatusOK)
+		}))
+	slowURL := slowServer.URL
+	fastURL := fastServer.URL
+	winner := Racer(slowURL, fastURL)
+	if winner != fastURL {
+		t.Errorf("got %v but want %v", winner, fastURL)
 	}
 }
