@@ -2,20 +2,24 @@ package racer
 
 import (
 	"net/http"
-	"time"
 )
 
 // Racer 返回两个url中返回快的那个
 func Racer(a, b string) string {
-	if measureDuration(a) > measureDuration(b) {
+	// select 会同时监听两个channel
+	select {
+	case <-ping(a):
+		return a
+	case <-ping(b):
 		return b
 	}
-	return a
 }
 
-func measureDuration(url string) time.Duration {
-	startTime := time.Now()
-	http.Get(url)
-	duration := time.Since(startTime)
-	return duration
+func ping(url string) chan bool {
+	ch := make(chan bool)
+	go func() {
+		http.Get(url)
+		ch <- true
+	}()
+	return ch
 }
