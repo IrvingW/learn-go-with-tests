@@ -9,21 +9,24 @@ func Walk(x interface{}, fn func(string)) {
 	if value.Kind() == reflect.Ptr {
 		value = value.Elem()
 	}
-	if value.Kind() == reflect.Slice {
-		for i := 0; i < value.Len(); i++ {
-			Walk(value.Index(i).Interface(), fn)
+	number := 0
+	var getField func(int) reflect.Value
+	switch value.Kind() {
+	case reflect.String:
+		fn(value.String())
+	case reflect.Struct:
+		number = value.NumField()
+		getField = value.Field
+	case reflect.Array, reflect.Slice:
+		number = value.Len()
+		getField = value.Index
+	case reflect.Map:
+		for _, key := range value.MapKeys() {
+			Walk(value.MapIndex(key).Interface(), fn)
 		}
-		return
 	}
-	for i := 0; i < value.NumField(); i++ {
-		field := value.Field(i)
-		switch field.Kind() {
-		case reflect.String:
-			fn(field.String())
-		case reflect.Struct, reflect.Array:
-			Walk(field.Interface(), fn)
-			return
-		}
 
+	for i := 0; i < number; i++ {
+		Walk(getField(i).Interface(), fn)
 	}
 }
