@@ -6,6 +6,9 @@ import "reflect"
 // 使用interface{}指代可以传入任何东西
 func Walk(x interface{}, fn func(string)) {
 	value := reflect.ValueOf(x)
+	if value.Kind() == reflect.Ptr {
+		value = value.Elem()
+	}
 	for i := 0; i < value.NumField(); i++ {
 		field := value.Field(i)
 		switch field.Kind() {
@@ -13,7 +16,6 @@ func Walk(x interface{}, fn func(string)) {
 			fn(field.String())
 		case reflect.Struct:
 			Walk(field.Interface(), fn)
-
 		}
 
 	}
