@@ -20,7 +20,7 @@ func Walk(x interface{}, fn func(string)) {
 		switch field.Kind() {
 		case reflect.String:
 			fn(field.String())
-		case reflect.Struct:
+		case reflect.Struct, reflect.Array:
 			Walk(field.Interface(), fn)
 			return
 		}
