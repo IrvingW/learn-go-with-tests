@@ -9,6 +9,12 @@ func Walk(x interface{}, fn func(string)) {
 	if value.Kind() == reflect.Ptr {
 		value = value.Elem()
 	}
+	if value.Kind() == reflect.Slice {
+		for i := 0; i < value.Len(); i++ {
+			Walk(value.Index(i).Interface(), fn)
+		}
+		return
+	}
 	for i := 0; i < value.NumField(); i++ {
 		field := value.Field(i)
 		switch field.Kind() {
@@ -16,6 +22,7 @@ func Walk(x interface{}, fn func(string)) {
 			fn(field.String())
 		case reflect.Struct:
 			Walk(field.Interface(), fn)
+			return
 		}
 
 	}

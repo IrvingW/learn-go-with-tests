@@ -60,6 +60,14 @@ func TestWalk(t *testing.T) {
 			},
 			[]string{"Irving", "Boston"},
 		},
+		{
+			"slice",
+			[]Person{
+				{"Irving", Profile{32, "Boston"}},
+				{"James", Profile{24, "NewYork"}},
+			},
+			[]string{"Irving", "Boston", "James", "NewYork"},
+		},
 	}
 
 	for _, c := range cs {
