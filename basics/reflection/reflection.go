@@ -7,6 +7,14 @@ import "reflect"
 func Walk(x interface{}, fn func(string)) {
 	value := reflect.ValueOf(x)
 	for i := 0; i < value.NumField(); i++ {
-		fn(value.Field(i).String())
+		field := value.Field(i)
+		switch field.Kind() {
+		case reflect.String:
+			fn(field.String())
+		case reflect.Struct:
+			Walk(field.Interface(), fn)
+
+		}
+
 	}
 }
